@@ -1,6 +1,7 @@
 package com.pandemoonium.tntpvp;
 
 import com.pandemoonium.tntpvp.listeners.BlockListener;
+import com.pandemoonium.tntpvp.listeners.DamageListener;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -43,7 +44,9 @@ public final class TntPvp extends JavaPlugin {
         }
 
         BlockListener blockListener = new BlockListener(this);
+        DamageListener damageListener = new DamageListener(this);
         getServer().getPluginManager().registerEvents(blockListener, this);
+        getServer().getPluginManager().registerEvents(damageListener, this);
     }
 
     public WorldGuardPlugin registerWorldGuard() {
