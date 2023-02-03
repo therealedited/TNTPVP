@@ -1,0 +1,5 @@
+name: Tntpvp
+version: '${project.version}'
+main: com.pandemoonium.tntpvp.TntPvp
+api-version: 1.19
+depend: [ WorldGuard ]
