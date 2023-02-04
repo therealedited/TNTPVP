@@ -2,11 +2,13 @@ package com.pandemoonium.tntpvp;
 
 import com.pandemoonium.tntpvp.listeners.BlockListener;
 import com.pandemoonium.tntpvp.listeners.DamageListener;
+
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
