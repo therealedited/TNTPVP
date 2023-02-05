@@ -2,13 +2,16 @@ package com.pandemoonium.tntpvp.listeners;
 
 import com.pandemoonium.tntpvp.TntActions;
 import com.pandemoonium.tntpvp.TntPvp;
+
 import fr.mrmicky.fastboard.FastBoard;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -31,27 +34,20 @@ public class PlayerListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         //Did the death happen in the playing field?
         if (TntActions.IsExplodeInstantly(event.getPlayer())) {
-            String leadingPlayer = "";
-            Integer playerScore = -1;
-            //Drop nothing
+            //Only drop sticks
             ArrayList<ItemStack> itemsToDrop = new ArrayList<>();
+
+            for (ItemStack item: event.getPlayer().getInventory()) {
+                if (item == null) continue;
+                if (item.getType() == Material.STICK) {
+                    itemsToDrop.add(item);
+                }
+            }
             List<ItemStack> itemsAboutToGetDropped = event.getDrops();
             itemsAboutToGetDropped.retainAll(itemsToDrop);
 
             //Remove everything else
             event.getPlayer().getInventory().clear();
-
-            //Get the leading player
-            for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
-                if (mapEntry.getValue() > playerScore) {
-                    leadingPlayer = TntPvp.players.get(mapEntry.getKey());
-                }
-            }
-
-            //Update every player's scoreboard
-            for (Map.Entry<UUID, FastBoard> mapEntry : TntPvp.scoreboards.entrySet()) {
-                TntPvp.updateBoard(mapEntry.getValue(), leadingPlayer);
-            }
         }
     }
     @EventHandler
@@ -66,6 +62,38 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerPickupItem(PlayerAttemptPickupItemEvent event) {
+        if (TntActions.IsExplodeInstantly(event.getPlayer())) {
+            String leadingPlayer = "";
+            Integer playerScore = -1;
+            //The person who picked up the sticks gets points.
+            Player pickupPlayer = event.getPlayer();
+            Integer numberOfSticks = 0;
+            //Count all of their sticks stored in their inventory.
+            for (ItemStack item : pickupPlayer.getInventory()) {
+                if (item == null) continue;
+                if (item.getType() == Material.STICK) {
+                    numberOfSticks += item.getAmount();
+                }
+            }
+            //Count how many sticks they gathered.
+            numberOfSticks += event.getItem().getItemStack().getAmount();
+            TntPvp.scoreList.put(pickupPlayer.getUniqueId(), numberOfSticks);
+
+            //Get the leading player
+            for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
+                if (mapEntry.getValue() > playerScore) {
+                    leadingPlayer = TntPvp.players.get(mapEntry.getKey());
+                }
+            }
+
+            //Update every player's scoreboard
+            for (Map.Entry<UUID, FastBoard> mapEntry : TntPvp.scoreboards.entrySet()) {
+                TntPvp.updateBoard(mapEntry.getValue(), leadingPlayer);
+            }
+        }
+    }
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         if (TntActions.IsExplodeInstantly(event.getPlayer())) {

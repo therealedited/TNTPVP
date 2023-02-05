@@ -1,15 +1,13 @@
 package com.pandemoonium.tntpvp.listeners;
 
 import com.pandemoonium.tntpvp.TntPvp;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Map;
@@ -40,19 +38,6 @@ public class DamageListener implements Listener {
                         if (otherPlayer.getHealth() == 0D) {
                             String killerName = TntPvp.players.get(mapEntry.getValue());
                             otherPlayer.sendMessage(String.format("You were blown up by %s", killerName));
-                            //Increment the killer's score.
-                            Integer numberOfSticks = 0;
-                            for(ItemStack item : otherPlayer.getInventory()) {
-                                if (item.getType() == Material.STICK) {
-                                    numberOfSticks += item.getAmount();
-                                }
-                            }
-                            //We get the killer and add the sticks to their inventory.
-                            Player killer = Bukkit.getPlayer(mapEntry.getValue());
-                            if (killer != null) {
-                                killer.getInventory().addItem(new ItemStack(Material.STICK, numberOfSticks));
-                                TntPvp.scoreList.put(mapEntry.getValue(), numberOfSticks);
-                            }
                         }
                     }
                     //The damaged is the player that placed the tnt.

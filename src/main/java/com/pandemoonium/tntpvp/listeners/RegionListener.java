@@ -21,6 +21,7 @@ public class RegionListener implements Listener {
         this.tntPvp = tntPvp;
     }
 
+    //TODO: Don't hardcode the region name.
     @EventHandler
     public void onRegionEntered(RegionEnteredEvent e) {
         //Are we in a playing field?
@@ -44,6 +45,7 @@ public class RegionListener implements Listener {
         }
     }
 
+    //TODO: Don't hardcode the region name.
     @EventHandler
     public void onRegionLeave(RegionLeaveEvent e)
     {
@@ -52,9 +54,7 @@ public class RegionListener implements Listener {
             if (board != null) {
                 board.delete();
             }
-            e.getPlayer().getInventory().remove(Material.TNT);
-            e.getPlayer().getInventory().remove(Material.STONE);
-            e.getPlayer().getInventory().remove(Material.PORKCHOP);
+            e.getPlayer().getInventory().clear();
         }
     }
 }

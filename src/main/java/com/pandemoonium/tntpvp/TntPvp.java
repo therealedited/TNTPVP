@@ -24,6 +24,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -56,6 +57,17 @@ public final class TntPvp extends JavaPlugin implements CommandExecutor {
         if (commandName.equals("tntpvp")) {
             if(args[0].equals("reset")) {
                 scoreList = new HashMap<>();
+            }
+            if(args[0].equals("listplayers")) {
+                Object[] allPlayers = players.values().toArray();
+                sender.sendMessage(Arrays.copyOf(allPlayers, allPlayers.length, String[].class));
+            }
+            if(args[0].equals("listscores")) {
+                StringBuilder scores = new StringBuilder();
+                for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
+                    scores.append(String.format("%s - %s\n", players.get(mapEntry.getKey()), mapEntry.getValue()));
+                }
+                sender.sendMessage(String.valueOf(scores));
             }
         }
         return true;
