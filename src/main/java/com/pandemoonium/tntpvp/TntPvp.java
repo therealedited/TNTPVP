@@ -127,10 +127,10 @@ public final class TntPvp extends JavaPlugin implements CommandExecutor {
         // Plugin shutdown logic
     }
 
-    public static void updateBoard(FastBoard board, String leading) {
+    public static void updateBoard(FastBoard board, String leading, Integer score) {
         Bukkit.getLogger().warning(leading);
         board.updateLines(
                 "",
-                "LEADING: " + leading);
+                "1st: " + leading + "- " + score);
     }
 }

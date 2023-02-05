@@ -78,19 +78,22 @@ public class PlayerListener implements Listener {
                 }
             }
             //Count how many sticks they gathered.
-            numberOfSticks += event.getItem().getItemStack().getAmount();
-            TntPvp.scoreList.put(pickupPlayer.getUniqueId(), numberOfSticks);
+            if (event.getItem().getItemStack().getType() == Material.STICK) {
+                numberOfSticks += event.getItem().getItemStack().getAmount();
+                TntPvp.scoreList.put(pickupPlayer.getUniqueId(), numberOfSticks);
 
-            //Get the leading player
-            for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
-                if (mapEntry.getValue() > playerScore) {
-                    leadingPlayer = TntPvp.players.get(mapEntry.getKey());
+                //Get the leading player
+                for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
+                    if (mapEntry.getValue() > playerScore) {
+                        leadingPlayer = TntPvp.players.get(mapEntry.getKey());
+                        playerScore = mapEntry.getValue();
+                    }
                 }
-            }
 
-            //Update every player's scoreboard
-            for (Map.Entry<UUID, FastBoard> mapEntry : TntPvp.scoreboards.entrySet()) {
-                TntPvp.updateBoard(mapEntry.getValue(), leadingPlayer);
+                //Update every player's scoreboard
+                for (Map.Entry<UUID, FastBoard> mapEntry : TntPvp.scoreboards.entrySet()) {
+                    TntPvp.updateBoard(mapEntry.getValue(), leadingPlayer, playerScore);
+                }
             }
         }
     }

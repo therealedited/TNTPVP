@@ -38,9 +38,11 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public final void explodeEntity(EntityExplodeEvent e) {
-        Entity entity = e.getEntity();
-        if (entity instanceof TNTPrimed) {
-            e.blockList().clear();
+        if (TntActions.IsExplodeInstantly(e.getEntity())) {
+            Entity entity = e.getEntity();
+            if (entity instanceof TNTPrimed) {
+                e.blockList().clear();
+            }
         }
     }
 }

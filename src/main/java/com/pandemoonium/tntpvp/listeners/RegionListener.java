@@ -55,6 +55,8 @@ public class RegionListener implements Listener {
                 board.delete();
             }
             e.getPlayer().getInventory().clear();
+            TntPvp.players.remove(e.getPlayer().getUniqueId());
+            TntPvp.scoreList.remove(e.getPlayer().getUniqueId());
         }
     }
 }

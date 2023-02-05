@@ -45,8 +45,8 @@ public class DamageListener implements Listener {
                         Player player = (Player) e.getEntity();
                         TNTPrimed tnt = (TNTPrimed) e.getDamager();
                         Vector kb = tnt.getLocation().toVector().subtract(player.getLocation().toVector());
-                        //Push the player that detonated the tnt away from the other player.
-                        player.setVelocity(kb.multiply(-2));
+                        //Push the player that detonated the tnt away from the TNT.
+                        player.setVelocity(kb.multiply(-4));
                         //Negate self damage.
                         e.setCancelled(true);
                     }
