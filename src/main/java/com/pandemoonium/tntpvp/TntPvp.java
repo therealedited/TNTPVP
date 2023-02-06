@@ -20,6 +20,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,8 @@ public final class TntPvp extends JavaPlugin implements CommandExecutor {
     public static Map<UUID, FastBoard> scoreboards = new HashMap<>();
     public static Map<UUID, String> players = new HashMap<>();
 
+    public static Player leadingPlayer = null;
+
     @Override
     public void onLoad() {
 
@@ -57,6 +60,7 @@ public final class TntPvp extends JavaPlugin implements CommandExecutor {
         if (commandName.equals("tntpvp")) {
             if(args[0].equals("reset")) {
                 scoreList = new HashMap<>();
+                leadingPlayer = null;
             }
             if(args[0].equals("listplayers")) {
                 Object[] allPlayers = players.values().toArray();

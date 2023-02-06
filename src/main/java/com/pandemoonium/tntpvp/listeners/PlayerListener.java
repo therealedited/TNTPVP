@@ -1,18 +1,22 @@
 package com.pandemoonium.tntpvp.listeners;
 
+import com.pandemoonium.tntpvp.PlayerActions;
 import com.pandemoonium.tntpvp.TntActions;
 import com.pandemoonium.tntpvp.TntPvp;
 
 import fr.mrmicky.fastboard.FastBoard;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,6 +34,7 @@ public class PlayerListener implements Listener {
     }
 
 
+    //TODO: Recalculate score here too.
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         //Did the death happen in the playing field?
@@ -52,21 +57,18 @@ public class PlayerListener implements Listener {
     }
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        if (TntActions.IsExplodeInstantly(event.getPlayer())) {
-            Player player = event.getPlayer();
-            ItemStack tntStack = new ItemStack(Material.TNT, 64);
-            ItemStack stoneStack = new ItemStack(Material.STONE, 64);
-            ItemStack porkStack = new ItemStack(Material.COOKED_PORKCHOP, 64);
-            ItemStack stick = new ItemStack(Material.STICK, 1);
-            player.getInventory().addItem(tntStack, stoneStack, porkStack, stick);
+        Player player = event.getPlayer();
+        if (TntActions.IsExplodeInstantly(player)) {
+            PlayerActions.addItems(player);
         }
     }
 
     @EventHandler
     public void onPlayerPickupItem(PlayerAttemptPickupItemEvent event) {
         if (TntActions.IsExplodeInstantly(event.getPlayer())) {
-            String leadingPlayer = "";
+            String leadingPlayerName = "";
             Integer playerScore = -1;
+            UUID leadingPlayerUUID = null;
             //The person who picked up the sticks gets points.
             Player pickupPlayer = event.getPlayer();
             Integer numberOfSticks = 0;
@@ -85,14 +87,22 @@ public class PlayerListener implements Listener {
                 //Get the leading player
                 for (Map.Entry<UUID, Integer> mapEntry : TntPvp.scoreList.entrySet()) {
                     if (mapEntry.getValue() > playerScore) {
-                        leadingPlayer = TntPvp.players.get(mapEntry.getKey());
+                        leadingPlayerUUID = mapEntry.getKey();
+                        leadingPlayerName = TntPvp.players.get(mapEntry.getKey());
                         playerScore = mapEntry.getValue();
                     }
                 }
 
+                //We set in leading player in the game manager.
+                if (leadingPlayerUUID != null) {
+                    TntPvp.leadingPlayer = Bukkit.getPlayer(leadingPlayerUUID);
+                }
+
+
+
                 //Update every player's scoreboard
                 for (Map.Entry<UUID, FastBoard> mapEntry : TntPvp.scoreboards.entrySet()) {
-                    TntPvp.updateBoard(mapEntry.getValue(), leadingPlayer, playerScore);
+                    TntPvp.updateBoard(mapEntry.getValue(), leadingPlayerName, playerScore);
                 }
             }
         }
@@ -107,5 +117,22 @@ public class PlayerListener implements Listener {
                 p.sendMessage(ChatColor.RED + "You can't drop a token.");
             }
         }
+    }
+
+    @EventHandler
+    public void onRightClick(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        if (TntActions.IsExplodeInstantly(player)) {
+            if (TntPvp.leadingPlayer == null) {
+                player.sendMessage("There is no currently winning player.");
+                return;
+            }
+            if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+                    && player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
+                player.setCompassTarget(TntPvp.leadingPlayer.getLocation());
+                player.sendMessage(String.format("Targeted %s", TntPvp.leadingPlayer.getName()));
+            }
+        }
+
     }
 }

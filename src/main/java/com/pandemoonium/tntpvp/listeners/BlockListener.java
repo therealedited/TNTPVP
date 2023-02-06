@@ -7,10 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class BlockListener implements Listener {
@@ -37,7 +39,15 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler
-    public final void explodeEntity(EntityExplodeEvent e) {
+    public final void entityDamage(EntityDamageEvent e) {
+        if (TntActions.IsExplodeInstantly(e.getEntity())) {
+            if (e.getEntity().getType() == EntityType.DROPPED_ITEM) {
+                e.setCancelled(true);
+            }
+        }
+    }
+    @EventHandler
+    public final void explodeEvent(EntityExplodeEvent e) {
         if (TntActions.IsExplodeInstantly(e.getEntity())) {
             Entity entity = e.getEntity();
             if (entity instanceof TNTPrimed) {

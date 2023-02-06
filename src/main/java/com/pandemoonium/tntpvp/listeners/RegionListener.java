@@ -1,5 +1,6 @@
 package com.pandemoonium.tntpvp.listeners;
 
+import com.pandemoonium.tntpvp.PlayerActions;
 import com.pandemoonium.tntpvp.TntActions;
 import com.pandemoonium.tntpvp.TntPvp;
 
@@ -8,11 +9,8 @@ import de.netzkronehd.wgregionevents.events.RegionEnteredEvent;
 import de.netzkronehd.wgregionevents.events.RegionLeaveEvent;
 import fr.mrmicky.fastboard.FastBoard;
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 public class RegionListener implements Listener {
     TntPvp tntPvp;
@@ -35,12 +33,7 @@ public class RegionListener implements Listener {
             //Add the player's board to the global scoreboard list.
             TntPvp.scoreboards.put(e.getPlayer().getUniqueId(), board);
             if (TntActions.IsExplodeInstantly(e.getPlayer())) {
-                Player player = e.getPlayer();
-                ItemStack tntStack = new ItemStack(Material.TNT, 64);
-                ItemStack stoneStack = new ItemStack(Material.STONE, 64);
-                ItemStack porkStack = new ItemStack(Material.COOKED_PORKCHOP, 64);
-                ItemStack stick = new ItemStack(Material.STICK, 1);
-                player.getInventory().addItem(tntStack, stoneStack, porkStack, stick);
+                PlayerActions.addItems(e.getPlayer());
             }
         }
     }
